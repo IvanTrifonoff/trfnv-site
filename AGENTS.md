@@ -138,6 +138,8 @@ python3 -m http.server 8080   # http://localhost:8080 и /blog
 6. **Внешняя зависимость**: `marked` грузится с CDN. Если CDN недоступен — статья покажет ошибку (есть `catch`).
 7. **Не просить NS-записи** у is-a.dev в первом PR — отклонят (нужен стаж ≥30 дней).
 8. `owner.username` в is-a.dev JSON — `IvanTrifonoff`, а не `trfnv` (см. §1).
+9. **Не используй GitHub no-reply email** в `owner.email` — тест is-a.dev прямо запрещает `*@users.noreply.github.com`. Сейчас там реальный адрес `greaf@ya.ru` (публичный).
+10. **PR-шаблон is-a.dev трогать нельзя**: его нужно заполнить как есть — все чекбоксы `[x]`, ссылка между `WEBSITE_PREVIEW_START/END`, описание между `WEBSITE_PURPOSE_START/END`. Перезапись шаблона = метка `reason: incomplete pr` и провал проверки `Template`.
 
 ---
 
