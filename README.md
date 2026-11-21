@@ -18,7 +18,9 @@
 | `blog/posts/*.md` | Сами записи в Markdown |
 | `blog/blog.css` | Стили блога |
 | `blog/feed.xml` | RSS-лента |
-| `is-a-dev/trfnv.json` | Готовый JSON для PR в `is-a-dev/register` (подставь свой Pages-домен) |
+| `is-a-dev/trfnv.json` | Запись для `is-a-dev/register` (CNAME уже реальный) |
+| `deploy.sh` | Сборка `dist/` и деплой на Cloudflare Pages через wrangler |
+| `.gitignore` | Исключает `dist/` и `.deploy/` |
 
 Это чистая статика: никаких сборок и зависимостей. Можно открыть `index.html` напрямую или поднять локальный сервер:
 
@@ -41,47 +43,49 @@ python3 -m http.server 8080
    }
    ```
 3. Добавь `<item>` в `blog/feed.xml`.
-4. Закоммить и запушить — Cloudflare Pages сам передеплоит.
+4. Запустить `./deploy.sh` — он соберёт `dist/` и задеплоит на Pages. `git push` сам по себе **не** деплоит (проект не подключён к GitHub).
 
 Ссылка на запись: `/blog/post.html?slug=my-new-post`.
 
-## 1. Деплой на Cloudflare Pages
+## 1. Деплой на Cloudflare Pages (уже сделано)
 
-1. Зайди в [Cloudflare Dashboard](https://dash.cloudflare.com) → **Workers & Pages** → **Create** → **Pages** → **Connect to Git**.
-2. Выбери репозиторий `IvanTrifonoff/trfnv-site`.
-3. Build settings:
-   - **Framework preset:** `None`
-   - **Build command:** оставь пустым
-   - **Build output directory:** `/` (корень репозитория)
-4. **Project name:** `trfnv-site` (тогда дефолтный адрес будет `trfnv-site.pages.dev`).
-5. Нажми **Save and Deploy**.
+Проект `trfnv-site` создан через wrangler, деплой идёт **вручную**, без привязки к GitHub:
 
-### Добавить кастомный домен
+```bash
+wrangler login                    # один раз
+./deploy.sh                       # собрать dist/ и задеплоить
+```
 
-1. В проекте открой вкладку **Custom domains** → **Set up a custom domain**.
-2. Введи `trfnv.is-a.dev` → **Continue**. Cloudflare покажет запись вида:
-   ```
-   CNAME  trfnv  trfnv-site.pages.dev
-   ```
-3. Пока не нажимай «Deploy/Activate» — сначала добавь запись в is-a.dev (шаг 2), иначе верификация не пройдёт.
+- Дефолтный адрес: **https://trfnv-site.pages.dev** (301 по `/blog` → `/blog/` не требуется, оба отвечают 200).
+- `dist/` — временная папка, не коммитится (в `.gitignore`).
+- Prod-ветка: `main` (`--branch main`).
 
-## 2. Зарегистрировать домен в is-a.dev
+Если захочешь автодеплой при `git push`: Cloudflare Dashboard → проект `trfnv-site` → **Settings → Builds & deployments → Connect to Git** → репозиторий `IvanTrifonoff/trfnv-site`, output directory `/`. После этого `deploy.sh` можно будет не использовать.
 
-1. Отредактируй [`is-a-dev/trfnv.json`](is-a-dev/trfnv.json) — замени плейсхолдер на реальный адрес проекта:
-   ```json
-   {
-     "owner": { "username": "IvanTrifonoff" },
-     "records": { "CNAME": "trfnv-site.pages.dev" },
-     "proxied": true
-   }
-   ```
-   > `owner.username` — это аккаунт, который открывает PR. Домен `trfnv.is-a.dev`, а PR идёт от `IvanTrifonoff` — это нормально, но мейнтейнеры могут уточнить причину. Коротко объясни в описании PR, что `trfnv` — твой ник/бренд.
+### Добавить кастомный домен (после мержа PR)
 
-2. Сделай [fork](https://github.com/is-a-dev/register/fork) репозитория `is-a-dev/register`.
-3. Скопируй содержимое файла в `domains/trfnv.json` в своём форке.
-4. Commit → Push → открой **Pull Request** в `is-a-dev/register`.
-5. Дождись мержа (волонтёры, обычно от нескольких часов до 2 дней). Следи за комментариями — если попросят правки, внеси их.
-6. После мержа вернись в Cloudflare Pages → **Custom domains** и заверши добавление домена. DNS обновится за несколько минут.
+```bash
+wrangler pages domain add trfnv.is-a.dev --project-name trfnv-site
+```
+
+Или через UI: проект → **Custom domains** → **Set up a custom domain** → `trfnv.is-a.dev`.
+Cloudflare покажет CNAME `trfnv → trfnv-site.pages.dev` — он уже добавлен в DNS через is-a.dev.
+
+## 2. Домен в is-a.dev (PR уже открыт)
+
+- **PR:** https://github.com/is-a-dev/register/pull/62243
+- **Форк:** `IvanTrifonoff/register`, ветка `trfnv-domain`, файл `domains/trfnv.json`
+- **Содержимое:**
+  ```json
+  {
+    "owner": { "username": "IvanTrifonoff" },
+    "records": { "CNAME": "trfnv-site.pages.dev" },
+    "proxied": true
+  }
+  ```
+  > `owner.username` — аккаунт, который открыл PR. Домен `trfnv.is-a.dev`, а PR от `IvanTrifonoff` — это нормально; в описании PR это объяснено (trfnv — ник/бренд).
+
+**Осталось:** дождаться мержа (волонтёры, обычно от нескольких часов до 2 дней), следить за комментариями, при просьбе правок — внести их в ветке `trfnv-domain` форка. После мержа DNS обновится за несколько минут, затем добавить кастомный домен (см. выше).
 
 ## Полезное
 

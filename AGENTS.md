@@ -15,9 +15,11 @@
 | GitHub-репозиторий | `IvanTrifonoff/trfnv-site` (ветка `main`) |
 | GitHub-аккаунт владельца PR | `IvanTrifonoff` |
 | Желаемый домен | `trfnv.is-a.dev` (ROOT, не вложенный!) |
-| Хостинг | Cloudflare Pages, проект `trfnv-site` → `trfnv-site.pages.dev` |
+| Хостинг | Cloudflare Pages, проект `trfnv-site` → `trfnv-site.pages.dev` (живой, HTTP 200) |
 | DNS | is-a.dev, зона лежит на Cloudflare |
-| Сборка | **отсутствует** — чистый HTML/CSS/JS, деплой из корня репо |
+| Сборка | **отсутствует** — чистый HTML/CSS/JS; деплой вручную через `./deploy.sh` (wrangler) |
+| PR на домен | https://github.com/is-a-dev/register/pull/62243 (открыт, ожидает ревью) |
+| Форк для PR | `IvanTrifonoff/register`, ветка `trfnv-domain` |
 
 Ключевое ограничение is-a.dev: **корневой домен должен быть связан с разработкой ПО** (см. ToS). Поэтому контент сделан dev-ориентированным. NS-записи новичкам не дают — не propose их.
 
@@ -33,6 +35,8 @@
 .
 ├── AGENTS.md              ← ты здесь
 ├── README.md              ← человекочитаемая инструкция по деплою
+├── deploy.sh              ← собрать dist/ и задеплоить через wrangler
+├── .gitignore             ← dist/ и .deploy/ не коммитим
 ├── index.html             ← главная (лендинг)
 ├── styles.css             ← общая тема, переменные, компоненты, адаптив
 ├── 404.html               ← страница 404 (стили подключены относительно)
@@ -69,9 +73,12 @@
 - `blog/feed.xml` не генерируется автоматически — обновляется вручную.
 
 ### Cloudflare Pages
-- Build command: пустой. Output directory: `/`. Framework preset: `None`.
+- Проект создан через `wrangler pages project create trfnv-site --production-branch main`.
+- Деплой: `wrangler pages deploy dist --project-name trfnv-site --branch main` (обёрнут в `./deploy.sh`).
+- **Важно:** проект НЕ подключён к GitHub — `git push` НЕ деплоит. Только `./deploy.sh`.
+- `dist/` — временная папка, создаётся скриптом, в `.gitignore`; в неё копируются только публичные файлы (без `AGENTS.md`, `README.md`, `is-a-dev/`).
 - `_headers` выставляет `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy` и жёсткий кэш для `styles.css`.
-- Кастомный домен добавляется в UI Pages **после** мержа PR в is-a.dev: CNAME `trfnv → trfnv-site.pages.dev`.
+- Кастомный домен добавляется **после** мержа PR: `wrangler pages domain add trfnv.is-a.dev --project-name trfnv-site`. CNAME `trfnv → trfnv-site.pages.dev` уже прописан в DNS через is-a.dev.
 
 ---
 
@@ -84,7 +91,7 @@
    ```
 3. Добавить `<item>` в `blog/feed.xml` (datetime в формате RFC 822, напр. `Sat, 21 Nov 2026 00:00:00 GMT`).
 4. Проверить синтаксис (см. §6).
-5. `git add . && git commit -m "..." && git push` → Pages передеплоит автоматически.
+5. `./deploy.sh` → соберёт `dist/` и задеплоит. `git push` сам по себе деплой **не** запускает.
 
 ---
 
@@ -125,7 +132,7 @@ python3 -m http.server 8080   # http://localhost:8080 и /blog
 
 1. **НЕ пиши `return` на верхнем уровне обычного `<script>`** — это `SyntaxError` и весь скрипт падает. В `post.html` код обёрнут в `(function () { ... })();` именно поэтому.
 2. **CNAME нельзя комбинировать с A/TXT/MX**, кроме случая `proxied: true`. В `trfnv.json` он как раз `true`.
-3. **Плейсхолдер в `is-a-dev/trfnv.json`** — `REPLACE-WITH-YOUR-PAGES-PROJECT.pages.dev`. Перед PR заменить на `trfnv-site.pages.dev`.
+3. **Плейсхолдер уже заменён** на `trfnv-site.pages.dev`. Если видишь `REPLACE-WITH-...` — значит, смотришь старую версию файла. PR уже отправлен, повторно его не создавать.
 4. **Кэш браузера**: если вместо сайта открывается заглушка is-a.dev — чистить кэш, DNS уже распространился.
 5. **Заглушка проектов** в `index.html` — это демо-контент. Заменить на реальные проекты.
 6. **Внешняя зависимость**: `marked` грузится с CDN. Если CDN недоступен — статья покажет ошибку (есть `catch`).
@@ -139,7 +146,9 @@ python3 -m http.server 8080   # http://localhost:8080 и /blog
 - `b2d330b` — initial static site (лендинг, стили, 404, _headers, README, is-a-dev JSON)
 - `7092134` — blog scaffolding (6 файлов блога)
 - `ad401c9` — fix blog script scoping + убрал дубль H1 в посте
-- `AGENTS.md` — этот ориентир
+- `8825718` — добавил AGENTS.md (этот ориентир)
+- `42ad142` — реальный CNAME `trfnv-site.pages.dev` + `.gitignore`
+- PR в is-a.dev: https://github.com/is-a-dev/register/pull/62243 (ветка `trfnv-domain` в форке)
 
 ---
 
@@ -150,4 +159,6 @@ python3 -m http.server 8080   # http://localhost:8080 и /blog
 - Pretty URLs `/blog/<slug>/` вместо `?slug=`.
 - Страницы тегов.
 - Реальные проекты и контактные данные вместо заглушек.
-- Отдельный `.nojekyll` не нужен ( Pages не использует Jekyll).
+- Подключить Pages к GitHub для автодеплоя (сейчас только ручной `./deploy.sh`).
+- Дождаться мержа PR #62243 и добавить кастомный домен `trfnv.is-a.dev`.
+- Отдельный `.nojekyll` не нужен (Pages не использует Jekyll).
