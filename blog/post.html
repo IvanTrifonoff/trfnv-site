@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0b0f19" />
+  <title>Запись — блог trfnv</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="blog.css" />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+  <div class="glow" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <a class="brand" href="/">
+      <span class="brand-mark">tr</span>
+      <span class="brand-name">trfnv<span class="brand-dot">.</span></span>
+    </a>
+    <nav class="nav" aria-label="Основная навигация">
+      <a href="/#about">about</a>
+      <a href="/#projects">projects</a>
+      <a href="/blog">blog</a>
+      <a class="nav-cta" href="https://github.com/IvanTrifonoff" target="_blank" rel="noopener">github ↗</a>
+    </nav>
+  </header>
+
+  <main class="blog-main article-main">
+    <a class="back-link" href="/blog">← все записи</a>
+    <article id="article">
+      <p class="loading">Загружаю запись…</p>
+    </article>
+    <div class="article-bottom">
+      <a class="btn btn-ghost" href="/blog">← Вернуться в блог</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <span>© <span id="year">2026</span> trfnv</span>
+    <span class="footer-note">built with HTML &amp; CSS · hosted on Cloudflare Pages</span>
+    <a href="/">на главную ↑</a>
+  </footer>
+
+  <script src="posts.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const article = document.getElementById('article');
+    const slug = new URLSearchParams(location.search).get('slug') || '';
+
+    // Только безопасные имена файлов — никаких путей вверх или спецсимволов.
+    if (!/^[a-z0-9][a-z0-9-]{0,100}$/.test(slug)) {
+      return renderError('Некорректная ссылка на запись.');
+    }
+
+    const post = (window.POSTS || []).find(p => p.slug === slug);
+    if (!post) return renderError('Запись не найдена. Возможно, она была перемещена.');
+
+    document.title = post.title + ' — блог trfnv';
+    const description = document.createElement('meta');
+    description.name = 'description';
+    description.content = post.description || '';
+    document.head.appendChild(description);
+
+    fetch('posts/' + encodeURIComponent(slug) + '.md')
+      .then(r => { if (!r.ok) throw new Error('Not found'); return r.text(); })
+      .then(md => {
+        if (typeof marked === 'undefined') throw new Error('Markdown parser unavailable');
+        marked.setOptions({ gfm: true, breaks: false });
+        article.innerHTML = `
+          <header class="article-header">
+            <div class="section-label">${escapeHtml((post.tags || []).join(' / ')) || 'запись'}</div>
+            <h1>${escapeHtml(post.title)}</h1>
+            <time datetime="${post.date}">${formatDate(post.date)}</time>
+          </header>
+          <div class="prose">${marked.parse(md)}</div>
+        `;
+      })
+      .catch(() => renderError('Не удалось загрузить запись.'));
+
+    function formatDate(iso) {
+      return new Date(iso + 'T00:00:00').toLocaleDateString('ru-RU',
+        { day: 'numeric', month: 'long', year: 'numeric' });
+    }
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+    function renderError(message) {
+      article.innerHTML = `
+        <header class="article-header">
+          <div class="section-label">404</div>
+          <h1>Ничего не нашлось</h1>
+        </header>
+        <p class="loading">${escapeHtml(message)}</p>
+      `;
+    }
+  </script>
+</body>
+</html>

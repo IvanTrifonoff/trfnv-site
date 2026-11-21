@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Блог trfnv — заметки о разработке, инструментах и всём, что интересно." />
+  <meta name="theme-color" content="#0b0f19" />
+  <title>Блог — trfnv</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="blog.css" />
+</head>
+<body>
+  <div class="glow" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <a class="brand" href="/">
+      <span class="brand-mark">tr</span>
+      <span class="brand-name">trfnv<span class="brand-dot">.</span></span>
+    </a>
+    <nav class="nav" aria-label="Основная навигация">
+      <a href="/#about">about</a>
+      <a href="/#projects">projects</a>
+      <a href="/blog">blog</a>
+      <a class="nav-cta" href="https://github.com/IvanTrifonoff" target="_blank" rel="noopener">github ↗</a>
+    </nav>
+  </header>
+
+  <main class="blog-main">
+    <section class="blog-hero">
+      <div class="section-label">notes / blog</div>
+      <h1>Блог</h1>
+      <p class="lede">Заметки о коде, инструментах и том, чему я учусь по пути.</p>
+      <div class="blog-meta-line">
+        <span id="post-count">— записей</span>
+        <a href="feed.xml" type="application/rss+xml">RSS-лента ↗</a>
+      </div>
+    </section>
+
+    <section id="post-list" class="post-list" aria-live="polite">
+      <p class="loading">Загружаю записи…</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span>© <span id="year">2026</span> trfnv</span>
+    <span class="footer-note">built with HTML &amp; CSS · hosted on Cloudflare Pages</span>
+    <a href="/">на главную ↑</a>
+  </footer>
+
+  <script src="posts.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const list = document.getElementById('post-list');
+    const posts = (window.POSTS || []).slice().sort((a, b) => b.date.localeCompare(a.date));
+    document.getElementById('post-count').textContent =
+      posts.length + ' ' + (posts.length === 1 ? 'запись' : 'записей');
+
+    if (!posts.length) {
+      list.innerHTML = '<p class="loading">Пока нет ни одной записи.</p>';
+    } else {
+      list.innerHTML = posts.map(post => `
+        <article class="post-card">
+          <div class="post-card-top">
+            <time datetime="${post.date}">${formatDate(post.date)}</time>
+            <span class="post-card-arrow">↗</span>
+          </div>
+          <h2><a href="post.html?slug=${encodeURIComponent(post.slug)}">${escapeHtml(post.title)}</a></h2>
+          <p>${escapeHtml(post.description || '')}</p>
+          <div class="post-tags">${(post.tags || []).map(t => `<span>#${escapeHtml(t)}</span>`).join('')}</div>
+        </article>
+      `).join('');
+    }
+
+    function formatDate(iso) {
+      const d = new Date(iso + 'T00:00:00');
+      return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+    }
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+  </script>
+</body>
+</html>

@@ -10,6 +10,12 @@
 | `styles.css` | Стили |
 | `404.html` | Страница 404 |
 | `_headers` | Заголовки безопасности и кэширования для Cloudflare Pages |
+| `blog/index.html` | Список записей блога |
+| `blog/post.html` | Шаблон статьи (Markdown рендерится в браузере через `marked`) |
+| `blog/posts.js` | Реестр метаданных записей |
+| `blog/posts/*.md` | Сами записи в Markdown |
+| `blog/blog.css` | Стили блога |
+| `blog/feed.xml` | RSS-лента |
 | `is-a-dev/trfnv.json` | Готовый JSON для PR в `is-a-dev/register` (подставь свой Pages-домен) |
 
 Это чистая статика: никаких сборок и зависимостей. Можно открыть `index.html` напрямую или поднять локальный сервер:
@@ -18,6 +24,24 @@
 python3 -m http.server 8080
 # http://localhost:8080
 ```
+
+## Добавление записи в блог
+
+1. Создай `blog/posts/my-new-post.md` (имя файла = `slug`, только латиница, цифры и дефисы).
+2. Добавь объект в `blog/posts.js`:
+   ```js
+   {
+     slug: 'my-new-post',
+     title: 'Заголовок записи',
+     date: '2026-11-22',
+     description: 'Короткое описание для списка и RSS.',
+     tags: ['разработка']
+   }
+   ```
+3. Добавь `<item>` в `blog/feed.xml`.
+4. Закоммить и запушить — Cloudflare Pages сам передеплоит.
+
+Ссылка на запись: `/blog/post.html?slug=my-new-post`.
 
 ## 1. Деплой на Cloudflare Pages
 
