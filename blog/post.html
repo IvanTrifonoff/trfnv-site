@@ -48,6 +48,7 @@
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
+    (function () {
     const article = document.getElementById('article');
     const slug = new URLSearchParams(location.search).get('slug') || '';
 
@@ -97,6 +98,7 @@
         <p class="loading">${escapeHtml(message)}</p>
       `;
     }
+    })();
   </script>
 </body>
 </html>
