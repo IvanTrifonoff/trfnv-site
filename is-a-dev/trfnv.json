@@ -1,0 +1,9 @@
+{
+  "owner": {
+    "username": "IvanTrifonoff"
+  },
+  "records": {
+    "CNAME": "REPLACE-WITH-YOUR-PAGES-PROJECT.pages.dev"
+  },
+  "proxied": true
+}

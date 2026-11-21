@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="trfnv — разработка ПО,_open source и заметки о коде." />
+  <meta name="theme-color" content="#0b0f19" />
+  <title>trfnv — developer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="glow" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <a class="brand" href="#top">
+      <span class="brand-mark">tr</span>
+      <span class="brand-name">trfnv<span class="brand-dot">.</span></span>
+    </a>
+    <nav class="nav" aria-label="Основная навигация">
+      <a href="#about">about</a>
+      <a href="#projects">projects</a>
+      <a href="#stack">stack</a>
+      <a class="nav-cta" href="https://github.com/IvanTrifonoff" target="_blank" rel="noopener">github ↗</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <p class="eyebrow"><span class="status-dot"></span> open to collaborate</p>
+      <h1>Строю SOFTWARE<br /><span class="accent">с нуля и до прода.</span></h1>
+      <p class="lede">
+        Разработчик, который любит чистый код, быстрые интерфейсы
+        и инструменты, которыми приятно пользоваться каждый день.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#projects">Смотреть проекты <span>→</span></a>
+        <a class="btn btn-ghost" href="mailto:hello@trfnv.is-a.dev">Написать мне</a>
+      </div>
+      <div class="hero-meta">
+        <code>$ whoami</code>
+        <span>Learning · Building · Shipping</span>
+      </div>
+    </section>
+
+    <section id="about" class="section">
+      <div class="section-label">01 / about</div>
+      <div class="about-grid">
+        <h2>Коротко обо мне</h2>
+        <div class="about-text">
+          <p>
+            Я занимаюсь разработкой ПО: от фронтенда и API до автоматизации
+            и инфраструктуры. Нравится разбираться в том, как всё устроено
+            «под капотом», и превращать сложное в понятное.
+          </p>
+          <p>
+            Этот сайт — мой маленький уголок в интернете. Домен любезно
+            предоставлен <a href="https://is-a.dev" target="_blank" rel="noopener">is-a.dev</a>,
+            хостинг — <a href="https://pages.cloudflare.com" target="_blank" rel="noopener">Cloudflare Pages</a>.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects" class="section">
+      <div class="section-label">02 / projects</div>
+      <h2>Проекты</h2>
+      <div class="cards">
+        <article class="card">
+          <div class="card-top"><span class="tag">web</span><span class="arrow">↗</span></div>
+          <h3>Project One</h3>
+          <p>Короткое описание проекта: что делает и какую проблему решает.</p>
+          <div class="card-foot"><span>TypeScript</span><span>React</span></div>
+        </article>
+        <article class="card">
+          <div class="card-top"><span class="tag">tools</span><span class="arrow">↗</span></div>
+          <h3>Project Two</h3>
+          <p>Опиши здесь утилиту, библиотеку или сервис, которым гордишься.</p>
+          <div class="card-foot"><span>Go</span><span>CLI</span></div>
+        </article>
+        <article class="card">
+          <div class="card-top"><span class="tag">open source</span><span class="arrow">↗</span></div>
+          <h3>Project Three</h3>
+          <p>Ещё одна идея, которую стоит показать миру и открыть исходники.</p>
+          <div class="card-foot"><span>Python</span><span>API</span></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="stack" class="section">
+      <div class="section-label">03 / stack</div>
+      <h2>Инструменты</h2>
+      <ul class="chips">
+        <li>TypeScript</li><li>JavaScript</li><li>React</li><li>Next.js</li>
+        <li>Node.js</li><li>Go</li><li>Python</li><li>PostgreSQL</li>
+        <li>Docker</li><li>Git</li><li>Cloudflare</li><li>Linux</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span>© <span id="year">2026</span> trfnv</span>
+    <span class="footer-note">built with HTML &amp; CSS · hosted on Cloudflare Pages</span>
+    <a href="#top">наверх ↑</a>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
