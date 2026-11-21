@@ -45,7 +45,7 @@ python3 -m http.server 8080
 3. Добавь `<item>` в `blog/feed.xml`.
 4. Запустить `./deploy.sh` — он соберёт `dist/` и задеплоит на Pages. `git push` сам по себе **не** деплоит (проект не подключён к GitHub).
 
-Ссылка на запись: `/blog/post.html?slug=my-new-post`.
+Ссылка на запись: `/blog/post?slug=my-new-post` (без `.html` — Cloudflare Pages всё равно редиректит `.html` на адрес без расширения, лучше использовать канонический вид).
 
 ## 1. Деплой на Cloudflare Pages (уже сделано)
 
@@ -71,7 +71,7 @@ wrangler pages domain add trfnv.is-a.dev --project-name trfnv-site
 Или через UI: проект → **Custom domains** → **Set up a custom domain** → `trfnv.is-a.dev`.
 Cloudflare покажет CNAME `trfnv → trfnv-site.pages.dev` — он уже добавлен в DNS через is-a.dev.
 
-## 2. Домен в is-a.dev (PR уже открыт)
+## 2. Домен в is-a.dev (PR смержен ✅)
 
 - **PR:** https://github.com/is-a-dev/register/pull/62243
 - **Форк:** `IvanTrifonoff/register`, ветка `trfnv-domain`, файл `domains/trfnv.json`
@@ -87,7 +87,7 @@ Cloudflare покажет CNAME `trfnv → trfnv-site.pages.dev` — он уже
 
 Все автоматические проверки PR проходят (`Tests`, `Template`, `Label` — pass). В `owner.email` указан реальный адрес `greaf@ya.ru` — GitHub no-reply там запрещён тестами is-a.dev.
 
-**Осталось:** дождаться мержа (волонтёры, обычно от нескольких часов до 3 дней), следить за комментариями, при просьбе правок — внести их в ветке `trfnv-domain` форка. После мержа DNS обновится за несколько минут, затем добавить кастомный домен (см. выше).
+PR #62243 **смержен**, кастомный домен `trfnv.is-a.dev` добавлен в Pages. Сайт доступен по адресу **https://trfnv.is-a.dev** (главная, `/blog/`, Markdown и RSS отвечают 200). Обновления контента теперь достаточно залить через `./deploy.sh`.
 
 ## Полезное
 

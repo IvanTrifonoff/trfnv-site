@@ -9,8 +9,8 @@
 
   <item>
     <title>Привет, мир</title>
-    <link>https://trfnv.is-a.dev/blog/post.html?slug=hello-world</link>
-    <guid>https://trfnv.is-a.dev/blog/post.html?slug=hello-world</guid>
+    <link>https://trfnv.is-a.dev/blog/post?slug=hello-world</link>
+    <guid>https://trfnv.is-a.dev/blog/post?slug=hello-world</guid>
     <pubDate>Sat, 21 Nov 2026 00:00:00 GMT</pubDate>
     <description>Первая запись в блоге: почему я вообще решил вести заметки и что здесь будет.</description>
   </item>

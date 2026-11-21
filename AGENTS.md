@@ -18,7 +18,8 @@
 | Хостинг | Cloudflare Pages, проект `trfnv-site` → `trfnv-site.pages.dev` (живой, HTTP 200) |
 | DNS | is-a.dev, зона лежит на Cloudflare |
 | Сборка | **отсутствует** — чистый HTML/CSS/JS; деплой вручную через `./deploy.sh` (wrangler) |
-| PR на домен | https://github.com/is-a-dev/register/pull/62243 (открыт, ожидает ревью) |
+| PR на домен | https://github.com/is-a-dev/register/pull/62243 (**MERGED**) |
+| Живой домен | https://trfnv.is-a.dev — отвечает 200, кастомный домен добавлен в Pages |
 | Форк для PR | `IvanTrifonoff/register`, ветка `trfnv-domain` |
 
 Ключевое ограничение is-a.dev: **корневой домен должен быть связан с разработкой ПО** (см. ToS). Поэтому контент сделан dev-ориентированным. NS-записи новичкам не дают — не propose их.
@@ -67,7 +68,7 @@
 - `blog/posts.js` объявляет `window.POSTS = [{ slug, title, date, description, tags }]` — это единственный источник истины о записях.
 - `blog/index.html`: sort по `date` по убыванию, рендер карточек в `#post-list`, escape HTML через `escapeHtml()`.
 - `blog/post.html`: берёт `?slug=` из URL, ищет запись в `window.POSTS`, делает `fetch('posts/<slug>.md')`, рендерит через `marked` (подключён с CDN jsdelivr в `<head>`).
-- Ссылка на статью: `/blog/post.html?slug=my-post` — **query-параметр, не pretty URL**. Так выбрано сознательно: на статике без rewrite-правил ЧПУ requiring per-post HTML не работают.
+- Ссылка на статью: `/blog/post?slug=my-post` — **query-параметр, не pretty URL**. Так выбрано сознательно: на статике без rewrite-правил ЧПУ с per-post HTML не работают. `.html` в URL писать не надо — Cloudflare Pages сам редиректит на адрес без расширения.
 - `slug` валидируется регуляркой `/^[a-z0-9][a-z0-9-]{0,100}$/` — защита от path traversal.
 - Заголовок статьи берётся из реестра, **НЕ из `# H1` внутри Markdown** — не дублируй H1 в `.md`.
 - `blog/feed.xml` не генерируется автоматически — обновляется вручную.
@@ -162,5 +163,4 @@ python3 -m http.server 8080   # http://localhost:8080 и /blog
 - Страницы тегов.
 - Реальные проекты и контактные данные вместо заглушек.
 - Подключить Pages к GitHub для автодеплоя (сейчас только ручной `./deploy.sh`).
-- Дождаться мержа PR #62243 и добавить кастомный домен `trfnv.is-a.dev`.
 - Отдельный `.nojekyll` не нужен (Pages не использует Jekyll).
